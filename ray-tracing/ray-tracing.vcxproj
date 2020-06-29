@@ -148,6 +148,10 @@
     <ClInclude Include="src\shapes\sphere.h" />
     <ClInclude Include="src\vec3.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="build.bat" />
+    <None Include="run.bat" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

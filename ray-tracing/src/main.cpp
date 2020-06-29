@@ -7,7 +7,7 @@
 
 std::vector<sphere> spheres = { 
     sphere(point3(0.0, 0.0, -2.0), 1, color(1.0, 0.0, 0.0))
-   // , sphere(point3(2.0, 0.0, -2.0), 1, color(1.0, 0.0, 1.0))
+    //,sphere(point3(2.0, 0.0, -2.0), 1, color(1.0, 0.0, 1.0))
 };
 
 inline color default_color(const ray& r)
