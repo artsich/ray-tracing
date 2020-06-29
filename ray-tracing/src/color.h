@@ -4,9 +4,12 @@
 
 #include <iostream>
 
-void write_color(std::ostream& out, color pixel_color) 
+void write_color(std::ostream& out, color pixel_color, int samples_per_pixel) 
 {
-    out << static_cast<int>(255.999 * pixel_color.x()) << ' '
-        << static_cast<int>(255.999 * pixel_color.y()) << ' '
-        << static_cast<int>(255.999 * pixel_color.z()) << std::endl;
+    auto scale = 1.0 / samples_per_pixel;
+    color new_color = pixel_color * scale;
+
+    out << static_cast<int>(255.999 * new_color.r) << ' '
+        << static_cast<int>(255.999 * new_color.g) << ' '
+        << static_cast<int>(255.999 * new_color.b) << std::endl;
 }

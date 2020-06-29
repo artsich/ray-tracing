@@ -12,7 +12,7 @@ const color blue_color = color(0.5, 0.7, 1.0);
 inline color default_color(const ray& r)
 {
     vec3 unit_direction = unit_vector(r.direction());
-    auto t = 0.5 * (unit_direction.y() + 1.0);
+    auto t = 0.5 * (unit_direction.y + 1.0);
     return lerp(white_color, blue_color, t);
 }
 
@@ -42,6 +42,7 @@ int main(int argc, char** argv)
 
     const auto aspect_ratio = 16.0 / 9.0;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
+    const int samples_per_pixel = 100;
 
     std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
 
@@ -60,13 +61,18 @@ int main(int argc, char** argv)
 
         for (int i = 0; i < image_width; ++i) 
         {
-            auto u = double(i) / (image_width - 1);
-            auto v = double(j) / (image_height - 1);
-            ray r = cam.get_ray(u, v);
-            color pixel_color = ray_color(r, world);
+            color pixel_color;
+            for (int s = 0; s < samples_per_pixel; ++s) 
+            {
+                auto u = double(i + random_double()) / (image_width - 1);
+                auto v = double(j + random_double()) / (image_height - 1);
+                ray r = cam.get_ray(u, v);
+                pixel_color += ray_color(r, world);
+
+            }
 
             if(isWrite)
-                write_color(std::cout, pixel_color);
+                write_color(std::cout, pixel_color, samples_per_pixel);
         }
     }
 
