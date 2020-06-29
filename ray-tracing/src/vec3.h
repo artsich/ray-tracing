@@ -95,3 +95,8 @@ inline vec3 cross(const vec3& u, const vec3& v) {
 inline vec3 unit_vector(vec3 v) {
     return v / v.length();
 }
+
+inline vec3 lerp(const vec3& start, const vec3& end, double t) 
+{
+    return start + t * (end - start);
+}

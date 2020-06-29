@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\shapes\hitable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\shapes\sphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -28,6 +25,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\vec3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shapes\hittable_list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shapes\hittable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
