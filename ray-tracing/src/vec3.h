@@ -1,5 +1,6 @@
 #pragma once
-#include <cmath>
+
+#include "common.h"
 #include <iostream>
 
 using std::sqrt;
@@ -37,6 +38,14 @@ public:
 
     double length_squared() const {
         return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
+    }
+
+    inline static vec3 random() {
+        return vec3(random_double(), random_double(), random_double());
+    }
+
+    inline static vec3 random(double min, double max) {
+        return vec3(random_double(min, max), random_double(min, max), random_double(min, max));
     }
 
 public:
@@ -102,6 +111,26 @@ inline vec3 cross(const vec3& u, const vec3& v) {
 
 inline vec3 unit_vector(vec3 v) {
     return v / v.length();
+}
+
+inline vec3 random_in_unit_sphere() {
+    auto p = unit_vector(vec3::random(-1, 1));
+    return p;
+    
+    // while (true) {
+    //     if (p.length_squared() >= 1) continue;
+    //     return p;
+    // }
+}
+
+inline vec3 random_in_hemisphere(const vec3& normal) {
+    vec3 in_unit_sphere = random_in_unit_sphere();
+    if (dot(in_unit_sphere, normal) > 0) {
+        return in_unit_sphere;
+    }
+    else {
+        return -in_unit_sphere;
+    }
 }
 
 inline vec3 lerp(const vec3& start, const vec3& end, double t) 

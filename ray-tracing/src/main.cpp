@@ -1,30 +1,45 @@
+#include <chrono>
+
 #include "common.h"
 
 #include "camera.h"
 #include "color.h"
 
+#include "materials/lambertian.h"
 #include "shapes/hittable_list.h"
 #include "shapes/sphere.h"
 
 const color white_color = color(1.0, 1.0, 1.0);
 const color blue_color = color(0.5, 0.7, 1.0);
+const color black_color = color(0.0, 0.0, 0.0);
 
-inline color default_color(const ray& r)
+inline color sky_color(const ray& r)
 {
     vec3 unit_direction = unit_vector(r.direction());
     auto t = 0.5 * (unit_direction.y + 1.0);
     return lerp(white_color, blue_color, t);
 }
 
-color ray_color(const ray& r, const hittable& world)
+color ray_color(const ray& r, const hittable& world, int depth = 20)
 {
-    hit_record rec;
-    if (world.hit(r, 0.0, infinity, rec)) 
+    if (depth < 0) 
     {
-        return 0.5 * (rec.normal + white_color);
+        return black_color;
     }
 
-    return default_color(r);
+    hit_record rec;
+    if (world.hit(r, epsilon, infinity, rec)) 
+    {
+        color col;
+        ray scatered_ray;
+        if (rec.mat->scatter(r, rec, col, scatered_ray)) {
+            return col * ray_color(scatered_ray, world, depth - 1);
+        }
+
+        return black_color;
+    }
+
+    return sky_color(r);
 }
 
 int main(int argc, char** argv)
@@ -52,8 +67,23 @@ int main(int argc, char** argv)
     camera cam(point3(0.0, 0.0, 0.0), focal_length, viewport_height, aspect_ratio);
 
     hittable_list world;
-    world.add(make_shared<sphere>(point3(0,0,-1), 0.5));
-    world.add(make_shared<sphere>(point3(0,-100.5,-2), 100));
+    world.add(
+        make_shared<sphere>(
+            point3(0,0,-1), 
+            0.5, 
+            make_shared<lambertian>(color(1.0, 0.0, 0.0))
+        )
+    );
+
+    world.add(
+        make_shared<sphere>(
+            point3(0,-100.5,-2), 
+            100, 
+            make_shared<lambertian>(color(0.0, 1.0, 0.0))
+        )
+    );
+
+    auto start_time = std::chrono::system_clock::now();
 
     for (int j = image_height - 1; j >= 0; --j) {
         if (isDebugMode)
@@ -75,6 +105,10 @@ int main(int argc, char** argv)
                 write_color(std::cout, pixel_color, samples_per_pixel);
         }
     }
-
-    std::cerr << "\nDone.\n";
+    auto end_time = std::chrono::system_clock::now();
+    
+    double ms = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
+    double sec = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count();
+    
+    std::cerr << "\nDone.\n" << "MS elapsed: " << ms << "\nSec: " << sec << "\n";
 }

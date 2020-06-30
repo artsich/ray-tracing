@@ -2,12 +2,15 @@
 
 #include "../ray.h"
 
+class material;
+
 struct hit_record
 {
+    bool front_face;
+    double t;
+    shared_ptr<material> mat;
     point3 p;
     vec3 normal;
-    double t;
-    bool front_face;
 
     inline void set_face_normal(const ray& r, const vec3& outward_normal)
     {

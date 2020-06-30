@@ -6,10 +6,11 @@ class sphere : public hittable
 {
 public:
 
-    sphere(const point3& position, double radius)
+    sphere(const point3& position, double radius, shared_ptr<material> m)
         : center(position)
         , radius(radius)
         , double_radius(radius* radius)
+        , mat(m)
     {
     }
 
@@ -55,7 +56,7 @@ private:
     {
         rec.t = root;
         rec.p = r.at(rec.t);
-
+        rec.mat = mat;
         // This expression equal unit_lenght(rec.p - this->center)
         //
         // If you want to unarstand it, just plot this on papper!
@@ -66,5 +67,6 @@ private:
 private:
     double radius;
     double double_radius;
+    shared_ptr<material> mat;
     point3 center;
 };

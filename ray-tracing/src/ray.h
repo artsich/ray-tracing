@@ -5,6 +5,8 @@
 class ray
 {
 public:
+	ray() = default;
+	
 	ray(const point3 origin, const vec3& dir)
 		: dir(dir)
 		, orig(origin)
