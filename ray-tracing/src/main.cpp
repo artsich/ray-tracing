@@ -1,14 +1,15 @@
-#include <chrono>
-
 #include "common.h"
 #include "camera.h"
-#include "color.h"
+#include "frame.h"
+
+#include "shapes/sphere.h"
+#include "shapes/hittable_list.h"
 
 #include "materials/lambertian.h"
 #include "materials/metal.h"
 
-#include "shapes/hittable_list.h"
-#include "shapes/sphere.h"
+#include "command_line_args.h"
+#include "util/benchmark.h"
 
 void generate_world(hittable_list& world);
 
@@ -21,10 +22,6 @@ inline color sky_color(const ray& r) {
     vec3 unit_direction = unit_vector(r.direction());
     auto t = 0.5 * (unit_direction.y + 1.0);
     return lerp(white_color, blue_color, t);
-}
-
-void print_vec3(const char* name, const vec3& v) {
-    std::cerr << name << " : " << v.x << ", " << v.y << ", " << v.z << "\n";
 }
 
 color ray_color(const ray& r, const hittable& world, int depth = 50) {
@@ -51,23 +48,13 @@ color ray_color(const ray& r, const hittable& world, int depth = 50) {
 
 int main(int argc, char** argv)
 {
-    int image_width = 384;
-    int samples_per_pixel = 100;
-    bool isDebugMode = true;
-    bool isWrite = false;
+    command_line_args cmd_args(argc, argv);
 
-    if (argc == 4)
-    {
-        image_width = std::stoi(argv[1]);
-        samples_per_pixel = std::stoi(argv[2]);
-        isDebugMode = std::stoi(argv[3]) == 1;
-        isWrite = true;
-    }
+    int samples_per_pixel = cmd_args.samples_per_pixel;
+    int image_width = cmd_args.width;
 
     const auto aspect_ratio = 16.0 / 9.0;
-    const int image_height = static_cast<int>(image_width / aspect_ratio);
-
-    std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
+    const auto image_height = static_cast<int>(image_width / aspect_ratio);
 
     const double viewport_height = 2.0;
     const double focal_length = 1.0;
@@ -77,34 +64,34 @@ int main(int argc, char** argv)
     hittable_list world;
     generate_world(world);
 
-    auto start_time = std::chrono::system_clock::now();
+    frame image_frame(image_width, image_height);
 
-    for (int j = image_height - 1; j >= 0; --j) {
-        if (isDebugMode)
-            std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
+    benchmark _benchmark;
+    _benchmark.start();
+    { 
+        for (int j = image_frame.get_height() - 1; j >= 0; --j) {
+            if (cmd_args.is_debug_mode)
+                std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
 
-        for (int i = 0; i < image_width; ++i) 
-        {
-            color pixel_color;
-            for (int s = 0; s < samples_per_pixel; ++s) 
+            for (int i = 0; i < image_frame.get_width(); ++i) 
             {
-                auto u = double(i + random_double()) / (image_width - 1);
-                auto v = double(j + random_double()) / (image_height - 1);
-                ray r = cam.get_ray(u, v);
-                pixel_color += ray_color(r, world);
+                color pixel_color;
+                for (int s = 0; s < samples_per_pixel; ++s) 
+                {
+                    auto u = double(i + random_double()) / (image_width - 1);
+                    auto v = double(j + random_double()) / (image_height - 1);
+                    ray r = cam.get_ray(u, v);
+                    pixel_color += ray_color(r, world);
+                }
 
+                image_frame.write_color(i, j, pixel_color, samples_per_pixel);
             }
-
-            if(isWrite)
-                write_color(std::cout, pixel_color, samples_per_pixel);
         }
     }
-    auto end_time = std::chrono::system_clock::now();
-    
-    double ms = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
-    double sec = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count();
-    
-    std::cerr << "\nDone.\n" << "MS elapsed: " << ms << "\nSec: " << sec << "\n";
+    image_frame.save_to_ppm(std::cout);
+   
+    auto benchmark_result = _benchmark.stop();
+    benchmark_result.log(std::cerr);
 }
 
 void generate_world(hittable_list& world) {
@@ -134,7 +121,7 @@ void generate_world(hittable_list& world) {
 
     world.add(
         make_shared<sphere>(
-            point3(0,-100.5,-2), 
+            point3(0,100.5,-2), 
             100, 
             make_shared<lambertian>(color(0.8, 0.8, 0.0))
         )

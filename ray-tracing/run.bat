@@ -1,3 +1,3 @@
 pushd bin
-ray_traser.exe 3840 100 1 > image.ppm
+ray_traser.exe 1920 100 1 > image.ppm
 popd
