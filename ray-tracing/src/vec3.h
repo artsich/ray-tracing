@@ -116,7 +116,7 @@ inline vec3 unit_vector(vec3 v) {
 inline vec3 random_in_unit_sphere() {
     auto p = unit_vector(vec3::random(-1, 1));
     return p;
-    
+
     // while (true) {
     //     if (p.length_squared() >= 1) continue;
     //     return p;
@@ -133,7 +133,43 @@ inline vec3 random_in_hemisphere(const vec3& normal) {
     }
 }
 
+vec3 random_unit_vector() {
+    auto a = random_double(0, 2*pi);
+    auto z = random_double(-1, 1);
+    auto r = sqrt(1 - z*z);
+    return vec3(r*cos(a), r*sin(a), z);
+}
+
 inline vec3 lerp(const vec3& start, const vec3& end, double t) 
 {
     return start + t * (end - start);
+}
+
+//projection vector of vector A to vector B
+inline vec3 proj_vector(const vec3& a, const vec3& b) {
+    vec3 n = unit_vector(b);
+    return n * dot(a, b);
+}
+
+inline vec3 reflect(const vec3& n, const vec3& v) { 
+/*
+    N
+R       V
+ \  ^  /
+  \ | /
+   \|/
+    .
+    O
+
+    R + V = V_proj * 2
+    R = V_proj * 2 - V 
+    V_proj = n * dot(v, n)
+
+    R = n * dot(v, n) * 2 - V
+
+    replace V = -V, because -V it's ray to center of coord.
+
+    R = V - n * dot(V, N) * 2
+*/
+    return v - 2 * dot(v, n) * n;
 }

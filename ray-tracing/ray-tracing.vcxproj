@@ -142,8 +142,12 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\camera.h" />
     <ClInclude Include="src\color.h" />
     <ClInclude Include="src\common.h" />
+    <ClInclude Include="src\materials\lambertian.h" />
+    <ClInclude Include="src\materials\material.h" />
+    <ClInclude Include="src\materials\metal.h" />
     <ClInclude Include="src\ray.h" />
     <ClInclude Include="src\shapes\hittable.h" />
     <ClInclude Include="src\shapes\hittable_list.h" />

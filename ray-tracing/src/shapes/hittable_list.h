@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <vector>
+#include <algorithm>
 
 using std::shared_ptr;
 using std::make_shared;
@@ -27,7 +28,7 @@ public:
 			if (object->hit(r, t_min, closest_so_far, temp_rec))
 			{
 				hit_anything = true;
-				closest_so_far = temp_rec.t;
+				closest_so_far = std::min(closest_so_far, temp_rec.t);
 				rec = temp_rec;
 			}
 		}
