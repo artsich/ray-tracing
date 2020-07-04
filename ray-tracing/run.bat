@@ -1,3 +1,9 @@
+@echo off
 pushd bin
-ray_traser.exe 1920 100 1 > image.ppm
+@echo on
+
+ray_traser.exe 384 100 1 > image.ppm
+
+@echo on
 popd
+@echo off
