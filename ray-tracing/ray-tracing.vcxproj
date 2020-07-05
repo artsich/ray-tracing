@@ -72,15 +72,18 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Users\Artsiom_Dubinevich\Desktop\Ray Tracing\ray-tracing\ray-tracing\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Users\Artsiom_Dubinevich\Desktop\Ray Tracing\ray-tracing\ray-tracing\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\Users\Artsiom_Dubinevich\Desktop\Ray Tracing\ray-tracing\ray-tracing\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -140,10 +143,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\platform\win32\system\cuncurrency\thread.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\camera.h" />
-    <ClInclude Include="src\color.h" />
     <ClInclude Include="src\command_line_args.h" />
     <ClInclude Include="src\common.h" />
     <ClInclude Include="src\frame.h" />
@@ -155,6 +158,7 @@
     <ClInclude Include="src\shapes\hittable.h" />
     <ClInclude Include="src\shapes\hittable_list.h" />
     <ClInclude Include="src\shapes\sphere.h" />
+    <ClInclude Include="src\system\concurrency\thread.h" />
     <ClInclude Include="src\util\benchmark.h" />
     <ClInclude Include="src\vec3.h" />
   </ItemGroup>

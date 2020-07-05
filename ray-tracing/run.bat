@@ -2,8 +2,10 @@
 pushd bin
 @echo on
 
-ray_traser.exe 384 100 1 > image.ppm
+rem `height | samples | is_debug | num_of_threads`
 
-@echo on
-popd
+ray_tracer.exe 1024 100 0 16 > image.ppm
+
 @echo off
+popd
+@echo on

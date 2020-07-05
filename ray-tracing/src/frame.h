@@ -42,7 +42,6 @@ public:
 
 private:
 	inline void gamma_correct(color& col, double scale) {
-		// why do i scale here?
 		col.r = sqrt(col.r * scale);
 		col.g = sqrt(col.g * scale);
 		col.b = sqrt(col.b * scale);

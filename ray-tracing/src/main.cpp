@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "common.h"
 #include "camera.h"
 #include "frame.h"
@@ -7,6 +9,8 @@
 
 #include "materials/random_diffuse.h"
 #include "materials/metal.h"
+
+#include "system/concurrency/thread.h"
 
 #include "command_line_args.h"
 #include "util/benchmark.h"
@@ -46,24 +50,28 @@ color cast_ray(const ray& r, const hittable& world, int depth = 50) {
 	return sky_color(r);
 }
 
-void render(
+void half_renderer(
 	frame& iframe,
-	const camera& camera, 
-	const hittable& world, 
+	const camera& camera,
+	const hittable& world,
 	int samples_per_pixel,
-	bool is_debug_mode
+	bool is_debug_mode,
+	int y_start, int y_end
 ) {
 	auto width = iframe.get_width();
 	auto height = iframe.get_height();
 
-	for(int y = height - 1; y >= 0; y--) {
+	y_end = y_end > height ? height : y_end;
+	y_start = y_start < 0 ? 0 : y_start;
+
+	for (int y = y_end - 1; y >= y_start; y--) {
 		if (is_debug_mode)
 			std::cerr << "\rScanlines remaining: " << y << ' ' << std::flush;
 
 		for (int x = 0; x < width; ++x) {
 			color pixel_color(0.0, 0.0, 0.0);
 
-			for(int s = 0; s < samples_per_pixel; ++s) { 
+			for (int s = 0; s < samples_per_pixel; ++s) {
 				double u = double(x + random_double()) / (width - 1);
 				double v = double(y + random_double()) / (height - 1);
 
@@ -74,6 +82,64 @@ void render(
 			iframe.write_color(x, y, pixel_color, samples_per_pixel);
 		}
 	}
+}
+
+struct render_async_params {
+	bool is_debug_mode;
+	int y_start;
+	int y_end;
+	int samples_per_pixel;
+	frame* iframe;
+	camera* camera;
+	hittable* world;
+};
+
+render_async_params* generate_async_render_param(
+	frame* iframe,
+	camera* camera,
+	hittable* world,
+	int samples_per_pixel,
+	bool is_debug_mode,
+	int count
+) { 
+	render_async_params* params = new render_async_params[count];
+
+	int height = iframe->get_height();
+	params[0].camera = camera;
+	params[0].world = world;
+	params[0].iframe = iframe;
+	params[0].is_debug_mode = is_debug_mode;
+	params[0].samples_per_pixel = samples_per_pixel;
+	params[0].y_start = 0;
+	params[0].y_end = height * (1 / count);
+
+	for(int i = 1; i < count; ++i) {
+		params[i].camera = camera;
+		params[i].world = world;
+		params[i].iframe = iframe;
+		params[i].is_debug_mode = is_debug_mode;
+		params[i].samples_per_pixel = samples_per_pixel;
+
+		params[i].y_start = params[i - 1].y_end;
+		params[i].y_end = height * (i / ((double)count-1));
+	}
+
+	return params;
+}
+
+THREAD_PROCEDURE(render_async) {
+	render_async_params* params = (render_async_params*)args;
+	assert(params);
+
+	half_renderer(
+		*params->iframe, 
+		*params->camera, 
+		*params->world, 
+		params->samples_per_pixel, 
+		params->is_debug_mode, 
+		params->y_start, params->y_end);
+
+	return 1;
 }
 
 int main(int argc, char** argv)
@@ -98,12 +164,41 @@ int main(int argc, char** argv)
 	benchmark _benchmark;
 	_benchmark.start();
 	{
-		render(image_frame, cam, world, cmd_args.samples_per_pixel, cmd_args.is_debug_mode);
-		image_frame.save_to_ppm(std::cout);
-	}
-	auto benchmark_result = _benchmark.stop();
+		if (cmd_args.num_of_threads > 1) {
+			const int count_threads = cmd_args.num_of_threads;
 
-	benchmark_result.log(std::cerr);
+			render_async_params* params = generate_async_render_param(
+				&image_frame,
+				&cam,
+				&world,
+				cmd_args.samples_per_pixel, cmd_args.is_debug_mode,
+				count_threads);
+
+			tid *threads = new tid[count_threads];
+			for(int i = 0; i < count_threads; ++i) {
+				threads[i] = create_thread(&render_async, &params[i], true);
+			}
+
+			for(int i = 0; i < count_threads; ++i) {
+				join_thread(threads[i]);
+				close_thread(threads[i]);
+			}
+
+			delete threads;
+			delete params;
+		}
+		else {
+			half_renderer(image_frame, cam, world, cmd_args.samples_per_pixel, cmd_args.is_debug_mode, 0, image_height);
+		}
+	}
+
+	auto render_to_buffer_benchmark = _benchmark.stop();
+	render_to_buffer_benchmark.log("\nRender done.\n", std::cerr);
+
+	_benchmark.start();
+	image_frame.save_to_ppm(std::cout);
+	auto load_to_file_benchmark = _benchmark.stop();
+	load_to_file_benchmark.log("Save to file done.\n", std::cerr);
 }
 
 void generate_world(hittable_list& world) {
@@ -119,7 +214,7 @@ void generate_world(hittable_list& world) {
 		make_shared<sphere>(
 			point3(1,0,-1.5), 
 			0.5,
-			make_shared<metal>(color(.8,.6,.2), 0)
+			make_shared<metal>(color(.8,.6,.2), 0.1)
 		)
 	);
 
@@ -127,7 +222,7 @@ void generate_world(hittable_list& world) {
 		make_shared<sphere>(
 			point3(-1,0,-1),
 			0.5,
-			make_shared<metal>(color(.8,.8,.8), 1)
+			make_shared<metal>(color(.8,.8,.8), 1.0)
 		)
 	);
 
@@ -135,7 +230,7 @@ void generate_world(hittable_list& world) {
 		make_shared<sphere>(
 			point3(0,100.5,-2), 
 			100, 
-			make_shared<metal>(color(0.8, 0.8, 0.0), 0)
+			make_shared<random_diffuse>(color(0.8, 0.8, 0.0))
 		)
 	);
 }

@@ -21,8 +21,8 @@ public:
         return std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count();
     }
 
-    void log(std::ostream& out) { 
-        std::cerr << "\nDone.\n" << "MS elapsed: " << get_ms() << "\nSec: " << get_sec() << "\n";
+    void log(const char* message, std::ostream& out) { 
+        std::cerr << message << "MS elapsed: " << get_ms() << "\nSec: " << get_sec() << "\n";
     }
 
 private:
