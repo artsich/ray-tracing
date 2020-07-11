@@ -121,25 +121,29 @@ render_async_params* generate_async_render_param(
 		params[i].samples_per_pixel = samples_per_pixel;
 
 		params[i].y_start = params[i - 1].y_end;
-		params[i].y_end = height * (i / ((double)count-1));
+		params[i].y_end = height * (i / ((double)count - 1));
 	}
 
 	return params;
 }
 
 THREAD_PROCEDURE(render_async) {
+	assert(args);
 	render_async_params* params = (render_async_params*)args;
-	assert(params);
 
-	half_renderer(
-		*params->iframe, 
-		*params->camera, 
-		*params->world, 
-		params->samples_per_pixel, 
-		params->is_debug_mode, 
-		params->y_start, params->y_end);
+	if (params) {
+		half_renderer(
+			*params->iframe, 
+			*params->camera, 
+			*params->world, 
+			params->samples_per_pixel, 
+			params->is_debug_mode, 
+			params->y_start, params->y_end);
 
-	return 1;
+		return 1;
+	}
+
+	return 0;
 }
 
 int main(int argc, char** argv)
@@ -152,9 +156,13 @@ int main(int argc, char** argv)
 	const auto image_height = static_cast<int>(image_width / aspect_ratio);
 
 	const double viewport_height = 2.0;
-	const double focal_length = 1.0;
 
-	camera cam(point3(0.0, 0.0, 0.0), focal_length, viewport_height, aspect_ratio);
+	vec3 vup(0.0, 1.0, 0.0);
+//	point3 lookfrom(-2.0, 2.0, 0.0);
+	point3 lookfrom(0.0, 0.0, 0.0);
+	point3 lookat(0.0, 0.0, -1.0);
+
+	camera cam(lookfrom, lookat, vup, viewport_height, aspect_ratio, 90.0);
 
 	hittable_list world;
 	generate_world(world);
@@ -184,7 +192,7 @@ int main(int argc, char** argv)
 				close_thread(threads[i]);
 			}
 
-			delete threads;
+			delete[] threads;
 			delete params;
 		}
 		else {
@@ -195,10 +203,12 @@ int main(int argc, char** argv)
 	auto render_to_buffer_benchmark = _benchmark.stop();
 	render_to_buffer_benchmark.log("\nRender done.\n", std::cerr);
 
-	_benchmark.start();
-	image_frame.save_to_ppm(std::cout);
-	auto load_to_file_benchmark = _benchmark.stop();
-	load_to_file_benchmark.log("Save to file done.\n", std::cerr);
+	{
+		_benchmark.start();
+		image_frame.save_to_ppm(std::cout);
+		auto load_to_file_benchmark = _benchmark.stop();
+		load_to_file_benchmark.log("Save to file done.\n", std::cerr);
+	}
 }
 
 void generate_world(hittable_list& world) {

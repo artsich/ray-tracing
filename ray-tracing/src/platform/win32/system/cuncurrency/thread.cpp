@@ -117,7 +117,11 @@ void join_thread(tid thread_id) {
 		assert(false);
 	}
 }
-
+/*
+	`Not fully implemented.`
+	doesn't realy close thread.
+	just close the handle.
+*/
 void close_thread(tid thread_id) {
 	HANDLE native_handle = get_thread_native_handle(thread_id);
 	if (native_handle) {
