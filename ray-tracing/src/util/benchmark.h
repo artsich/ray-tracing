@@ -22,7 +22,7 @@ public:
     }
 
     void log(const char* message, std::ostream& out) { 
-        std::cerr << message << "MS elapsed: " << get_ms() << "\nSec: " << get_sec() << "\n";
+        out << message << "MS elapsed: " << get_ms() << "\nSec: " << get_sec() << "\n";
     }
 
 private:

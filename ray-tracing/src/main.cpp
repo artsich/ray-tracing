@@ -15,7 +15,7 @@
 #include "command_line_args.h"
 #include "util/benchmark.h"
 
-//#include "scene_parser/lexer.h"
+#include "scene_parser/lexer.h"
 
 void generate_world(hittable_list& world);
 
@@ -57,7 +57,6 @@ void half_renderer(
 	const camera& camera,
 	const hittable& world,
 	int samples_per_pixel,
-	bool is_debug_mode,
 	int y_start, int y_end
 ) {
 	auto width = iframe.get_width();
@@ -67,9 +66,6 @@ void half_renderer(
 	y_start = y_start < 0 ? 0 : y_start;
 
 	for (int y = y_end - 1; y >= y_start; y--) {
-		if (is_debug_mode)
-			std::cerr << "\rScanlines remaining: " << y << ' ' << std::flush;
-
 		for (int x = 0; x < width; ++x) {
 			color pixel_color(0.0, 0.0, 0.0);
 
@@ -87,7 +83,6 @@ void half_renderer(
 }
 
 struct render_async_params {
-	bool is_debug_mode;
 	int y_start;
 	int y_end;
 	int samples_per_pixel;
@@ -101,7 +96,6 @@ render_async_params* generate_async_render_param(
 	camera* camera,
 	hittable* world,
 	int samples_per_pixel,
-	bool is_debug_mode,
 	int count
 ) { 
 	render_async_params* params = new render_async_params[count];
@@ -110,7 +104,6 @@ render_async_params* generate_async_render_param(
 	params[0].camera = camera;
 	params[0].world = world;
 	params[0].iframe = iframe;
-	params[0].is_debug_mode = is_debug_mode;
 	params[0].samples_per_pixel = samples_per_pixel;
 	params[0].y_start = 0;
 	params[0].y_end = height * (1 / count);
@@ -119,11 +112,10 @@ render_async_params* generate_async_render_param(
 		params[i].camera = camera;
 		params[i].world = world;
 		params[i].iframe = iframe;
-		params[i].is_debug_mode = is_debug_mode;
 		params[i].samples_per_pixel = samples_per_pixel;
 
 		params[i].y_start = params[i - 1].y_end;
-		params[i].y_end = height * (i / ((double)count - 1));
+		params[i].y_end = height * (int)(i / ((double)count - 1));
 	}
 
 	return params;
@@ -139,7 +131,6 @@ THREAD_PROCEDURE(render_async) {
 			*params->camera, 
 			*params->world, 
 			params->samples_per_pixel, 
-			params->is_debug_mode, 
 			params->y_start, params->y_end);
 
 		return 1;
@@ -151,11 +142,12 @@ THREAD_PROCEDURE(render_async) {
 int main(int argc, char** argv)
 {
 
-	// lex_test();
+	lex_test();
 
 	command_line_args cmd_args(argc, argv);
 
 	int image_width = cmd_args.width;
+	cmd_args.num_of_threads = 10;
 
 	const auto aspect_ratio = 16.0 / 9.0;
 	const auto image_height = static_cast<int>(image_width / aspect_ratio);
@@ -184,7 +176,7 @@ int main(int argc, char** argv)
 				&image_frame,
 				&cam,
 				&world,
-				cmd_args.samples_per_pixel, cmd_args.is_debug_mode,
+				cmd_args.samples_per_pixel,
 				count_threads);
 
 			tid *threads = new tid[count_threads];
@@ -201,7 +193,7 @@ int main(int argc, char** argv)
 			delete params;
 		}
 		else {
-			half_renderer(image_frame, cam, world, cmd_args.samples_per_pixel, cmd_args.is_debug_mode, 0, image_height);
+			half_renderer(image_frame, cam, world, cmd_args.samples_per_pixel, 0, image_height);
 		}
 	}
 

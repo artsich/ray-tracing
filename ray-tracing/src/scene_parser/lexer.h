@@ -21,7 +21,7 @@ struct Token {
 	union {
 		uint64_t int_val;
 		double float_val;		
-		struct { 
+		struct {
 			const char* name;
 			size_t name_len;
 		};
@@ -30,40 +30,6 @@ struct Token {
 
 Token token;
 const char* stream;
-
-size_t copy_token_kind_str(char* dest, size_t dest_size, TokenKind kind) {
-	size_t n = 0;
-	switch (kind) {
-	case 0:
-		n = snprintf(dest, dest_size, "end of file");
-		break;
-	case TOKEN_INT:
-		n = snprintf(dest, dest_size, "integer");
-		break;
-	case TOKEN_FLOAT:
-		n = snprintf(dest, dest_size, "float");
-		break;
-	case TOKEN_NAME:
-		n = snprintf(dest, dest_size, "name");
-		break;
-	default:
-		if (kind < 128 && isprint(kind)) {
-			n = snprintf(dest, dest_size, "%c", kind);
-		}
-		else {
-			n = snprintf(dest, dest_size, "<ASCII %d>", kind);
-		}
-		break;
-	}
-	return n;
-}
-
-const char *token_kind_str(TokenKind kind) {
-	static char buf[256];
-	size_t n = copy_token_kind_str(buf, sizeof(buf), kind);
-	assert(n + 1 <= sizeof(buf));
-	return buf;
-}
 
 int8_t char_to_digit[256];
 
@@ -212,6 +178,46 @@ top:
 		}
 
 	token.end = stream;
+}
+
+
+size_t copy_token_kind_str(char* dest, size_t dest_size, TokenKind kind) {
+	size_t n = 0;
+	switch (kind) {
+	case 0:
+		n = snprintf(dest, dest_size, "end of file");
+		break;
+	case TOKEN_INT:
+		n = snprintf(dest, dest_size, "integer");
+		break;
+	case TOKEN_FLOAT:
+		n = snprintf(dest, dest_size, "float");
+		break;
+	case TOKEN_NAME:
+		n = snprintf(dest, dest_size, "name");
+		break;
+	default:
+		if (kind < 128 && isprint(kind)) {
+			n = snprintf(dest, dest_size, "%c", kind);
+		}
+		else {
+			n = snprintf(dest, dest_size, "<ASCII %d>", kind);
+		}
+		break;
+	}
+	return n;
+}
+
+const char *token_kind_str(TokenKind kind) {
+	static char buf[256];
+	size_t n = copy_token_kind_str(buf, sizeof(buf), kind);
+	assert(n + 1 <= sizeof(buf));
+	return buf;
+}
+
+void init_stream(const char* str) {
+	stream = str;
+	next_token();
 }
 
 inline bool is_token(TokenKind kind) { 

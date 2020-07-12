@@ -52,14 +52,16 @@ public:
     union 
     {
         double e[3];
-        struct 
-        {
-            double r, g, b;
-        };
+        union {
+            struct
+            {
+                double r, g, b;
+            };
 
-        struct 
-        {
-            double x, y, z;
+            struct 
+            {
+                double x, y, z;
+            };
         };
     };
 };

@@ -3,6 +3,8 @@
 rem `-g` flag to generate obj files, use to debug.
 rem `-Wall` warning all.
 
+if not exist "./bin" mkdir bin
+
 set compiled_files=src/main.cpp src/platform/win32/system/cuncurrency/thread.cpp
 set output_file=-o bin/ray_tracer.exe
 
@@ -20,4 +22,3 @@ if errorlevel 1 (
 )
 
 echo Compilation Done
-popd
