@@ -60,6 +60,15 @@
     <ClInclude Include="src\system\concurrency\thread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\scene_parser\common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scene_parser\lexer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scene_parser\scene_parser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">

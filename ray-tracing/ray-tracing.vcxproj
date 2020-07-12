@@ -155,6 +155,9 @@
     <ClInclude Include="src\materials\metal.h" />
     <ClInclude Include="src\materials\random_diffuse.h" />
     <ClInclude Include="src\ray.h" />
+    <ClInclude Include="src\scene_parser\common.h" />
+    <ClInclude Include="src\scene_parser\lexer.h" />
+    <ClInclude Include="src\scene_parser\scene_parser.h" />
     <ClInclude Include="src\shapes\hittable.h" />
     <ClInclude Include="src\shapes\hittable_list.h" />
     <ClInclude Include="src\shapes\sphere.h" />

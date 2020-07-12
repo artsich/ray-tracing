@@ -65,24 +65,36 @@ const char *token_kind_str(TokenKind kind) {
 	return buf;
 }
 
-const uint8_t char_to_digit[] = {
-	['0'] = 0,
-	['1'] = 1,
-	['2'] = 2,
-	['3'] = 3,
-	['4'] = 4,
-	['5'] = 5,
-	['6'] = 6,
-	['7'] = 7,
-	['8'] = 8,
-	['9'] = 9,
-	['a'] = 10, ['A'] = 10,
-	['b'] = 11, ['B'] = 11,
-	['c'] = 12, ['C'] = 12,
-	['d'] = 13, ['D'] = 13,
-	['e'] = 14, ['E'] = 14,
-	['f'] = 15, ['F'] = 15,
+int8_t char_to_digit[256];
+
+struct InitMaps {
+	InitMaps() {
+		char_to_digit['0'] = 0;
+		char_to_digit['1'] = 1;
+		char_to_digit['2'] = 2;
+		char_to_digit['3'] = 3;
+		char_to_digit['4'] = 4;
+		char_to_digit['5'] = 5;
+		char_to_digit['6'] = 6;
+		char_to_digit['7'] = 7;
+		char_to_digit['8'] = 8;
+		char_to_digit['9'] = 9;
+		char_to_digit['a'] = 1;
+		char_to_digit['b'] = 1;
+		char_to_digit['c'] = 1;
+		char_to_digit['d'] = 1;
+		char_to_digit['e'] = 1;
+		char_to_digit['f'] = 1;
+		char_to_digit['A'] = 10;
+		char_to_digit['B'] = 11;
+		char_to_digit['C'] = 12;
+		char_to_digit['D'] = 13;
+		char_to_digit['E'] = 14;
+		char_to_digit['F'] = 15;
+	}
 };
+
+InitMaps init_maps();
 
 void scan_float() { 
 	const char* start = stream;
@@ -133,7 +145,7 @@ void scan_int() {
 		}
 
 		if (digit > base) {
-			syntax_error("Digit '%c' out of range for base %"PRIu64, *stream, base);
+			syntax_error("Digit '%c' out of range for base %llu", *stream, base);
 			digit = 0;
 		}
 
@@ -195,7 +207,7 @@ top:
 			break;
 		}
 		default:
-			token.kind = *stream++;
+			token.kind = (TokenKind)*stream++;
 			break;
 		}
 
@@ -208,8 +220,7 @@ inline bool is_token(TokenKind kind) {
 
 inline bool is_token_name(const char* name) {
 	assert(false);
-	// token.name == name doesn't work.
-	return is_token(TOKEN_NAME) && token.name == name;
+	return is_token(TOKEN_NAME) && strncmp(token.name, name, token.name_len);
 }
 
 inline bool match_token(TokenKind kind) {

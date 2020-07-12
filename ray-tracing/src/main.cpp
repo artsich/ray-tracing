@@ -15,6 +15,8 @@
 #include "command_line_args.h"
 #include "util/benchmark.h"
 
+//#include "scene_parser/lexer.h"
+
 void generate_world(hittable_list& world);
 
 const color white_color = color(1.0, 1.0, 1.0);
@@ -148,6 +150,9 @@ THREAD_PROCEDURE(render_async) {
 
 int main(int argc, char** argv)
 {
+
+	// lex_test();
+
 	command_line_args cmd_args(argc, argv);
 
 	int image_width = cmd_args.width;
