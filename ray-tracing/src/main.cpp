@@ -106,7 +106,7 @@ render_async_params* generate_async_render_param(
 	params[0].iframe = iframe;
 	params[0].samples_per_pixel = samples_per_pixel;
 	params[0].y_start = 0;
-	params[0].y_end = height * (1 / count);
+	params[0].y_end = (int)(height * (1.0 / count));
 
 	for(int i = 1; i < count; ++i) {
 		params[i].camera = camera;
@@ -115,7 +115,7 @@ render_async_params* generate_async_render_param(
 		params[i].samples_per_pixel = samples_per_pixel;
 
 		params[i].y_start = params[i - 1].y_end;
-		params[i].y_end = height * (int)(i / ((double)count - 1));
+		params[i].y_end = (int)(height * ((double)(i + 1) / (count)));
 	}
 
 	return params;
