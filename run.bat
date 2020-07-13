@@ -1,5 +1,5 @@
 @echo off
-pushd bin
+pushd prod-bin
 @echo on
 
 rem `height | samples | is_debug | num_of_threads`

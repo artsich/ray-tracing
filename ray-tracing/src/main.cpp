@@ -147,8 +147,6 @@ int main(int argc, char** argv)
 	command_line_args cmd_args(argc, argv);
 
 	int image_width = cmd_args.width;
-	cmd_args.num_of_threads = 10;
-
 	const auto aspect_ratio = 16.0 / 9.0;
 	const auto image_height = static_cast<int>(image_width / aspect_ratio);
 
