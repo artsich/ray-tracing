@@ -7,8 +7,9 @@
 #include "shapes/sphere.h"
 #include "shapes/hittable_list.h"
 
-#include "materials/random_diffuse.h"
 #include "materials/metal.h"
+#include "materials/dialectric.h"
+#include "materials/random_diffuse.h"
 
 #include "system/concurrency/thread.h"
 
@@ -211,7 +212,15 @@ void generate_world(hittable_list& world) {
 		make_shared<sphere>(
 			point3(0,0,-2), 
 			0.5, 
-			make_shared<random_diffuse>(color(0.7, 0.3, 0.3))
+			make_shared<dialectric>(1.5)
+		)
+	);
+
+	world.add(
+		make_shared<sphere>(
+			point3(0,0,-2), 
+			-0.45,
+			make_shared<dialectric>(1.5)
 		)
 	);
 

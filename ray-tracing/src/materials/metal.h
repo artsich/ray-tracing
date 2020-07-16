@@ -11,9 +11,9 @@ public:
 	{
 	}
 
-	virtual bool scatter(const ray& r, const hit_record& rec, color& attenuation, ray& scatered_ray) override {
+	virtual bool scatter(const ray& r, const hit_record& rec, color& attenuation, ray& scattered_ray) override {
 		vec3 reflected_ray_dir = reflect(rec.normal, unit_vector(r.direction()));
-		scatered_ray = ray(rec.p, reflected_ray_dir + fuzz*random_in_unit_sphere());
+		scattered_ray = ray(rec.p, reflected_ray_dir + fuzz*random_in_unit_sphere());
 		attenuation = albedo;
 		return dot(reflected_ray_dir, rec.normal) > 0.0;
 	}

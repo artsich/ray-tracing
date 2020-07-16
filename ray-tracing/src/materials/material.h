@@ -5,5 +5,5 @@
 
 class material { 
 public:
-	virtual bool scatter(const ray& r, const hit_record& rec, color& attenuation, ray& scatered_ray) = 0;
+	virtual bool scatter(const ray& r, const hit_record& rec, color& attenuation, ray& scattered_ray) = 0;
 };

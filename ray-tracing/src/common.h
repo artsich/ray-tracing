@@ -40,5 +40,11 @@ inline double clamp01(double x)
 	return clamp(x, 0.0, 0.999);
 }
 
+double schlink(double cosine, double ref_idx) {
+	auto r0 = (1.0 - ref_idx) / (1.0 + ref_idx);
+	r0 *= r0;
+	return r0 + (1.0 - r0) * pow((1 - cosine), 5.0);
+}
+
 #include "ray.h"
 #include "vec3.h"

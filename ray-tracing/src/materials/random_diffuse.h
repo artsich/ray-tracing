@@ -10,8 +10,8 @@ public:
 		: col(col) 
 	{}
 
-	virtual bool scatter(const ray& r, const hit_record& rec, color& attenuation, ray& scatered_ray) override {
-		scatered_ray = ray(rec.p, random_in_hemisphere(rec.normal));
+	virtual bool scatter(const ray& r, const hit_record& rec, color& attenuation, ray& scattered_ray) override {
+		scattered_ray = ray(rec.p, random_in_hemisphere(rec.normal));
 		attenuation = col;
 		return true;
 	}

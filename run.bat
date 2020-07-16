@@ -4,7 +4,7 @@ pushd prod-bin
 
 rem `height | samples | is_debug | num_of_threads`
 
-ray_tracer.exe 1920 100 0 16 > image.ppm
+ray_tracer.exe 384 100 0 16 > image.ppm
 
 @echo off
 echo The ray_tracer.exe returned status code: %errorlevel%
