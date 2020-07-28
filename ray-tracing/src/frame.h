@@ -33,7 +33,7 @@ public:
 
 			out << static_cast<int>(255.999 * clamp01(color.r)) << ' '
 				<< static_cast<int>(255.999 * clamp01(color.g)) << ' '
-				<< static_cast<int>(255.999 * clamp01(color.b)) << std::endl;
+				<< static_cast<int>(255.999 * clamp01(color.b)) << '\n';
 		}
 	}
 

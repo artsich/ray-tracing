@@ -22,7 +22,7 @@ struct command_line_args {
             width = 384;
             samples_per_pixel = 100;
             is_debug_mode = true;
-            num_of_threads = hardware_concurrency();
+            num_of_threads = 1; // hardware_concurrency();
         }
     }
 };

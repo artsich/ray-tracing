@@ -6,6 +6,8 @@
 #include <vector>
 #include <algorithm>
 
+#include "lights/light.h"
+
 using std::shared_ptr;
 using std::make_shared;
 
@@ -17,6 +19,7 @@ public:
 
 	void clear() { objects.clear(); }
 	void add(shared_ptr<hittable> object) { objects.push_back(object); }
+	void add_light(shared_ptr<light> light) { lights.push_back(light); }
 
 	virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const override  
 	{
@@ -38,4 +41,5 @@ public:
 
 public:
 	std::vector<shared_ptr<hittable>> objects;
+	std::vector<shared_ptr<light>> lights;
 };

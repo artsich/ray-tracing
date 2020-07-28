@@ -11,8 +11,13 @@
     - [ ] Materials
         - [X] metal
         - [X] diffuse
-        - [ ] etc.
+        - [ ] dialectric.
     - [ ] Lights
+    - [ ] To render so many objects need to implement KD-Tree
+    - [ ] Shapes
+        - [ ] Spheres
+        - [ ] Plane
+        - [ ] etc.
 - [ ] Editor
     - [ ] Develop 
     - [ ] other...

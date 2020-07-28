@@ -3,10 +3,10 @@
 #include "../vec3.h"
 #include "material.h"
 
-class random_diffuse  : public material {
+class lambertian  : public material {
 public:
 	
-	random_diffuse(const color& col) 
+	lambertian(const color& col) 
 		: col(col) 
 	{}
 

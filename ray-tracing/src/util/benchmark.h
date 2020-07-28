@@ -4,21 +4,21 @@
 #include <iostream>
 
 using time_point = std::chrono::time_point<std::chrono::system_clock>;
+using duration = std::chrono::system_clock::duration;
 
 class benchmark_result { 
 public:
-    benchmark_result(time_point start_time, time_point end_time) 
-    : start_time(start_time)
-    , end_time(end_time)
+    benchmark_result(time_point start_time, time_point end_time)
     {
+        ellapsed_time = end_time - start_time;
     }
    
     long long get_ms() {
-        return std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
+        return std::chrono::duration_cast<std::chrono::milliseconds>(ellapsed_time).count();
     }
 
     long long get_sec() {
-        return std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count();
+        return std::chrono::duration_cast<std::chrono::seconds>(ellapsed_time).count();
     }
 
     void log(const char* message, std::ostream& out) { 
@@ -26,8 +26,7 @@ public:
     }
 
 private:
-    time_point start_time;
-    time_point end_time;
+    duration ellapsed_time;
 };
 
 class benchmark {
@@ -37,11 +36,10 @@ public:
     }
 
     benchmark_result stop() {
-        end_time = std::chrono::system_clock::now();
+        time_point end_time = std::chrono::system_clock::now();
         return benchmark_result(start_time, end_time);
     }
 
 private:
     time_point start_time;
-    time_point end_time;
 };

@@ -4,19 +4,13 @@
 #include "camera.h"
 #include "frame.h"
 
-#include "shapes/sphere.h"
-#include "shapes/hittable_list.h"
-
-#include "materials/metal.h"
-#include "materials/dialectric.h"
-#include "materials/random_diffuse.h"
+#include "shapes/shapes.h"
+#include "materials/materials.h"
 
 #include "system/concurrency/thread.h"
 
 #include "command_line_args.h"
 #include "util/benchmark.h"
-
-#include "scene_parser/lexer.h"
 
 void generate_world(hittable_list& world);
 
@@ -70,6 +64,7 @@ void half_renderer(
 		for (int x = 0; x < width; ++x) {
 			color pixel_color(0.0, 0.0, 0.0);
 
+			// True to think about caching this values!!
 			for (int s = 0; s < samples_per_pixel; ++s) {
 				double u = double(x + random_double()) / (width - 1);
 				double v = double(y + random_double()) / (height - 1);
@@ -142,9 +137,6 @@ THREAD_PROCEDURE(render_async) {
 
 int main(int argc, char** argv)
 {
-
-	lex_test();
-
 	command_line_args cmd_args(argc, argv);
 
 	int image_width = cmd_args.width;
@@ -208,10 +200,20 @@ int main(int argc, char** argv)
 }
 
 void generate_world(hittable_list& world) {
+	// world.add(
+	// 	make_shared<plane>(
+	// 		point3(0.0, 0.0, -0.5),
+	// 		unit_vector(vec3(0.0, 1.0, 0.0)),
+	// 		1.0, 1.0,
+	// 		make_shared<lambertian>(color(1.0, 0.0, 0.0))
+	// 	)
+	// );
+
 	world.add(
 		make_shared<sphere>(
 			point3(0,0,-2), 
 			0.5, 
+//			make_shared<lambertian>(color(1.0, 1.0, 0.0))
 			make_shared<dialectric>(1.5)
 		)
 	);
@@ -219,7 +221,7 @@ void generate_world(hittable_list& world) {
 	world.add(
 		make_shared<sphere>(
 			point3(0,0,-2), 
-			-0.45,
+			-0.4,
 			make_shared<dialectric>(1.5)
 		)
 	);
@@ -236,7 +238,7 @@ void generate_world(hittable_list& world) {
 		make_shared<sphere>(
 			point3(-1,0,-1),
 			0.5,
-			make_shared<metal>(color(.8,.8,.8), 1.0)
+			make_shared<metal>(color(.8,.8,.8), 0.0)
 		)
 	);
 
@@ -244,7 +246,7 @@ void generate_world(hittable_list& world) {
 		make_shared<sphere>(
 			point3(0,100.5,-2), 
 			100, 
-			make_shared<random_diffuse>(color(0.8, 0.8, 0.0))
+			make_shared<lambertian>(color(0.8, 0.8, 0.0))
 		)
 	);
 }
