@@ -1,3 +1,5 @@
+#include <string>
+
 enum TokenKind {
     TOKEN_NONE = 127,
 
@@ -22,13 +24,13 @@ struct Token {
 
     bool match_token(TokenKind token_kind, const char* value) { 
         if (kind == token_kind) {
-            return match_token_name(value);
+            return strcmp(name, value);
         }
         return false;
     }
 
-    bool match_token_name(const char* value) { 
-        return strcmp(name, value);
+    bool match_token_name(const char* value) {
+        return match_token(TokenKind::TOKEN_NAME, value);
     }
 };
 
@@ -43,7 +45,6 @@ public:
 
     Token next_token()
     {
-        
         return token;
     }
 

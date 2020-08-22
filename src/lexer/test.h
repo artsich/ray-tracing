@@ -1,11 +1,11 @@
-#include "../lexer/lexer.h"
+#include "../lexer.h"
 
 #include <assert.h>
 
 #define assert_token(token, token_type) assert(token.is_token(token_type))
 #define assert_token_string(token, str_value) assert(token.match_token(TokenKind::TOKEN_STRING, str_value))
 
-int main() {
+void lexer_test() {
 
     Lexer lexer(
 R"(
@@ -29,6 +29,4 @@ R"(
 
     token = lexer.next_token();
     assert_token(token, '}');
-
-    return 0;
 }

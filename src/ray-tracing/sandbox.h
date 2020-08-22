@@ -135,7 +135,7 @@ THREAD_PROCEDURE(render_async) {
 	return 0;
 }
 
-int main(int argc, char** argv)
+int sandbox_render_run(int argc, char** argv)
 {
 	command_line_args cmd_args(argc, argv);
 
@@ -197,6 +197,8 @@ int main(int argc, char** argv)
 		auto load_to_file_benchmark = _benchmark.stop();
 		load_to_file_benchmark.log("Save to file done.\n", std::cerr);
 	}
+
+	return 0;
 }
 
 void generate_world(hittable_list& world) {

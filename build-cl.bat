@@ -7,9 +7,9 @@ pushd %output_folder%
 
 call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvarsall.bat" x64
 
-set compiled_files=../src/ray-tracing/main.cpp ../src/ray-tracing/platform/win32/system/cuncurrency/thread.cpp
+set compiled_files=../src/main.cpp ../src/platform/win32/system/cuncurrency/thread.cpp
 
-set included_dirs=/I ../src/ray-tracing/
+set included_dirs=/I ../src/
 set warning_options=/W4 /wd4100 /wd4201
 set compiler_options= %included_dirs% /Zi /favor:INTEL64 /O2 /Oi /nologo /EHa /fp:fast /Gm- /GR- /FC %warning_options%
 set linker_options=-incremental:no -opt:ref user32.lib winmm.lib /out:ray_tracer.exe
