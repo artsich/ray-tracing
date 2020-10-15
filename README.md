@@ -8,10 +8,10 @@
 - [X] Ray tracer
     - [X] Basic sphere rendering
     - [X] Free camera (has bug)
-    - [ ] Materials
+    - [X] Materials
         - [X] metal
         - [X] diffuse
-        - [ ] dialectric.
+        - [X] dialectric.
     - [ ] Lights
     - [ ] To render so many objects need to implement KD-Tree
     - [ ] Shapes
