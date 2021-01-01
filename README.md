@@ -13,7 +13,7 @@
         - [X] diffuse
         - [X] dialectric.
     - [ ] Lights
-    - [ ] To render so mach objects need to implement KD-Tree.
+    - [ ] To render a large number of objects more efficient need to implement KD-Tree.
     - [ ] Shapes
         - [X] Spheres
         - [ ] Plane
